@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
+
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -29,6 +34,11 @@ class AuthController extends Controller
         return redirect()->route('student.dashboard');
     }
 
+    public function showLogin()
+    {
+        return view('auth.login');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -37,9 +47,9 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($credentials)) {
-            return back()->withErrors([
-                'email' => 'Invalid credentials.',
-            ])->onlyInput('email');
+            return back()
+                ->withErrors(['email' => 'Invalid credentials.'])
+                ->onlyInput('email');
         }
 
         $request->session()->regenerate();
