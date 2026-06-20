@@ -3,63 +3,80 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Section;
+use App\Models\Subject;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SectionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $sections = Section::with(['subject', 'students'])->orderBy('name')->paginate(15);
+        return view('admin.sections.index', compact('sections'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $subjects = Subject::with('teacher')->orderBy('code')->get();
+        $students = User::where('role', 'student')->orderBy('name')->get();
+        return view('admin.sections.create', compact('subjects', 'students'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'subject_id' => 'required|exists:subjects,id',
+            'students'   => 'nullable|array',
+            'students.*' => 'exists:users,id',
+        ]);
+
+        $section = Section::create([
+            'name'       => $validated['name'],
+            'subject_id' => $validated['subject_id'],
+        ]);
+
+        if (!empty($validated['students'])) {
+            $section->students()->sync($validated['students']);
+        }
+
+        return redirect()->route('admin.sections.index')
+                         ->with('success', 'Section created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Section $section)
     {
-        //
+        $subjects = Subject::with('teacher')->orderBy('code')->get();
+        $students = User::where('role', 'student')->orderBy('name')->get();
+        $enrolledIds = $section->students->pluck('id')->toArray();
+        return view('admin.sections.edit', compact('section', 'subjects', 'students', 'enrolledIds'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Section $section)
     {
-        //
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'subject_id' => 'required|exists:subjects,id',
+            'students'   => 'nullable|array',
+            'students.*' => 'exists:users,id',
+        ]);
+
+        $section->update([
+            'name'       => $validated['name'],
+            'subject_id' => $validated['subject_id'],
+        ]);
+
+        $section->students()->sync($validated['students'] ?? []);
+
+        return redirect()->route('admin.sections.index')
+                         ->with('success', 'Section updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Section $section)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $section->delete();
+        return redirect()->route('admin.sections.index')
+                         ->with('success', 'Section deleted.');
     }
 }
