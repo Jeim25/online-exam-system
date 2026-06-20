@@ -1,13 +1,14 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 
 // Public
-Route::get('/', [LandingController::class, 'index']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout']);
+Route::get('/', [LandingController::class, 'index'])->name('index');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Authenticated
 Route::middleware('auth')->group(function () {
