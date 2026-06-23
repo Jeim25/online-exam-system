@@ -13,46 +13,46 @@
         <div class="bg-[#880000] text-white rounded-3xl shadow-lg p-8">
             <div class="flex items-center justify-between gap-6 flex-col sm:flex-row">
                 <div>
-                    <p class="text-sm uppercase tracking-[0.3em] text-white/75">Exam Submitted</p>
+                    <p class="text-sm uppercase tracking-[0.3em] text-white/80">Exam Submitted</p>
                     <h1 class="mt-3 text-4xl font-extrabold">Your score is ready</h1>
                 </div>
-                <div class="rounded-3xl bg-white/10 p-6 text-center">
-                    <p class="text-sm uppercase text-white/70">Final Score</p>
-                    <p class="mt-3 text-5xl font-black text-white">{{ $session->score ?? 0 }} / {{ $session->exam->questions->count() }}</p>
-                    <p class="text-sm text-white/70 mt-1">{{ $session->score && $session->exam->questions->count() > 0 ? round(($session->score / $session->exam->questions->count()) * 100) : 0 }}%</p>
+                <div class="rounded-3xl bg-white p-6 text-center text-gray-900">
+                    <p class="text-sm uppercase text-gray-500">Final Score</p>
+                    <p class="mt-3 text-5xl font-black text-gray-900">{{ $session->score ?? 0 }} / {{ $session->exam->questions->count() }}</p>
+                    <p class="text-sm text-gray-500 mt-1">{{ $session->score && $session->exam->questions->count() > 0 ? round(($session->score / $session->exam->questions->count()) * 100) : 0 }}%</p>
                 </div>
             </div>
 
             <div class="mt-8 grid gap-4 sm:grid-cols-2">
-                <div class="rounded-3xl bg-white/10 p-6">
-                    <p class="text-xs uppercase tracking-[0.28em] text-white/70">Exam</p>
-                    <p class="mt-3 text-xl font-semibold">{{ $session->exam->title }}</p>
-                    <p class="text-sm text-white/75">{{ $session->exam->subject->name ?? 'Subject' }}</p>
+                <div class="rounded-3xl bg-white shadow-sm p-6">
+                    <p class="text-xs uppercase tracking-[0.28em] text-gray-500">Exam</p>
+                    <p class="mt-3 text-xl font-semibold text-gray-900">{{ $session->exam->title }}</p>
+                    <p class="text-sm text-gray-600">{{ $session->exam->subject->name ?? 'Subject' }}</p>
                 </div>
-                <div class="rounded-3xl bg-white/10 p-6">
-                    <p class="text-xs uppercase tracking-[0.28em] text-white/70">Submitted</p>
-                    <p class="mt-3 text-xl font-semibold">{{ $session->submitted_at?->format('M d, Y') ?? '—' }}</p>
-                    <p class="text-sm text-white/75">{{ $session->submitted_at?->format('h:i A') ?? '—' }}</p>
+                <div class="rounded-3xl bg-white shadow-sm p-6">
+                    <p class="text-xs uppercase tracking-[0.28em] text-gray-500">Submitted</p>
+                    <p class="mt-3 text-xl font-semibold text-gray-900">{{ $session->submitted_at?->format('M d, Y') ?? '—' }}</p>
+                    <p class="text-sm text-gray-600">{{ $session->submitted_at?->format('h:i A') ?? '—' }}</p>
                 </div>
             </div>
 
-            <div class="mt-8 rounded-3xl bg-white/10 p-6 text-white/90">
-                <h2 class="text-xl font-bold">What you answered</h2>
+            <div class="mt-8 rounded-3xl bg-white p-6 text-gray-900">
+                <h2 class="text-xl font-bold text-gray-900">What you answered</h2>
                 <div class="mt-4 space-y-4">
                     @foreach($session->exam->questions as $index => $question)
                         @php
                             $answer = $session->answers->firstWhere('question_id', $question->id);
                             $selected = $answer?->choice;
                         @endphp
-                        <div class="rounded-2xl bg-white/10 p-4 border border-white/10">
+                        <div class="rounded-2xl bg-gray-50 p-4 border border-gray-200">
                             <div class="flex justify-between items-start gap-4">
                                 <div>
-                                    <p class="text-sm font-semibold">Question {{ $index + 1 }}</p>
-                                    <p class="mt-2 text-sm">{{ $question->body }}</p>
+                                    <p class="text-sm font-semibold text-gray-900">Question {{ $index + 1 }}</p>
+                                    <p class="mt-2 text-sm text-gray-700">{{ $question->body }}</p>
                                 </div>
-                                <span class="text-xs uppercase tracking-[0.28em] text-white/70">{{ $selected?->is_correct ? 'Correct' : 'Incorrect' }}</span>
+                                <span class="text-xs uppercase tracking-[0.28em] text-gray-500">{{ $selected?->is_correct ? 'Correct' : 'Incorrect' }}</span>
                             </div>
-                            <div class="mt-4 text-sm">
+                            <div class="mt-4 text-sm text-gray-700">
                                 <p><span class="font-semibold">Your answer:</span> {{ $selected->body ?? 'No answer' }}</p>
                                 <p class="mt-2"><span class="font-semibold">Correct answer:</span> {{ $question->choices->firstWhere('is_correct', 1)?->body ?? 'Not available' }}</p>
                             </div>
@@ -61,9 +61,8 @@
                 </div>
             </div>
 
-            <div class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="mt-8 flex justify-start gap-4">
                 <a href="{{ route('student.dashboard') }}" class="inline-flex items-center justify-center rounded-full bg-white text-[#880000] font-bold px-6 py-3 hover:bg-gray-100 transition-colors">Back to dashboard</a>
-                <a href="{{ route('student.exams.show', $session->exam) }}" class="inline-flex items-center justify-center rounded-full border border-white/30 text-white px-6 py-3 hover:bg-white/10 transition-colors">Review exam</a>
             </div>
         </div>
         @endif

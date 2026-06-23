@@ -11,8 +11,70 @@ class ExamController extends Controller
         return view('student.results');
     }
 
-    public function show(Exam $exam){
+    public function resultShow(ExamSession $session)
+    {
+        abort_unless($session->student_id === auth()->id(), 403);
+
+        $session->load(['exam.questions.choices', 'answers.choice']);
+
+        return view('student.results', compact('session'));
+    }
+
+    public function show(Exam $exam)
+    {
         return view('student.exams.show', compact('exam'));
     }
 
+    public function start(Exam $exam)
+    {
+        ExamSession::firstOrCreate([
+            'exam_id' => $exam->id,
+            'student_id' => auth()->id(),
+        ], [
+            'started_at' => now(),
+            'status' => 'in_progress',
+        ]);
+
+        return redirect()->route('student.exams.show', $exam);
+    }
+
+    public function submit(Request $request, Exam $exam)
+    {
+        $request->validate([
+            'answers' => 'array',
+            'answers.*' => 'integer|exists:choices,id',
+        ]);
+
+        $studentId = auth()->id();
+
+        $session = ExamSession::firstOrCreate([
+            'exam_id' => $exam->id,
+            'student_id' => $studentId,
+        ], [
+            'started_at' => now(),
+            'status' => 'in_progress',
+        ]);
+
+        // store answers
+        StudentAnswer::where('session_id', $session->id)->delete();
+
+        $answers = $request->input('answers', []);
+        foreach ($exam->questions as $question) {
+            if (! isset($answers[$question->id])) {
+                continue;
+            }
+
+            StudentAnswer::create([
+                'session_id' => $session->id,
+                'question_id' => $question->id,
+                'choice_id' => $answers[$question->id],
+            ]);
+        }
+
+        $session->refresh();
+        $session->load('answers.choice', 'exam.questions');
+        $session->grade();
+
+        return redirect()->route('student.results');
+    }
 }
