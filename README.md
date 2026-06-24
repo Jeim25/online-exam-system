@@ -1,5 +1,7 @@
 # Online Examination System
 
+🚀 **Live Demo:** [https://online-exam-system-production-1lkgux.laravel.cloud/](https://online-exam-system-production-1lkgux.laravel.cloud/)
+
 A multi-role web application for conducting and managing online examinations, built with Laravel 11 and Supabase (PostgreSQL).
 
 ---
@@ -53,7 +55,7 @@ A multi-role web application for conducting and managing online examinations, bu
 
 ```bash
 # Clone the repository
-git clone https://github.com/Jeim25/online-exam-system.git
+git clone [https://github.com/Jeim25/online-exam-system.git](https://github.com/Jeim25/online-exam-system.git)
 cd online-exam-system
 
 # Install dependencies
@@ -63,35 +65,3 @@ npm install && npm run dev
 # Environment setup
 cp .env.example .env
 php artisan key:generate
-```
-
-### Database Configuration
-
-In your `.env`, set the following:
-
-```env
-DB_CONNECTION=pgsql
-DB_HOST=aws-1-ap-southeast-1.pooler.supabase.com
-DB_PORT=5432
-DB_DATABASE=your_database
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-DB_SSLMODE=require
-```
-
-### Run Migrations
-
-```bash
-php artisan migrate
-```
-
-### Start the Server
-
-```bash
-php artisan serve
-```
-
-Visit `http://localhost:8000`
-
----
-
