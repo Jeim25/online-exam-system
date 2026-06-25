@@ -52,8 +52,12 @@
 
             </nav>
 
-            <div class="flex items-center border-l border-white/20 pl-5 relative group">
-                <div class="flex items-center space-x-2 cursor-pointer pb-2">
+            <div class="flex items-center border-l border-white/20 pl-5"
+                 x-data="{ open: false }"
+                 @click.outside="open = false">
+
+                <div class="flex items-center space-x-2 cursor-pointer select-none"
+                     @click="open = !open">
                     <div class="w-8 h-8 rounded-full bg-white text-[#880000] flex items-center justify-center font-bold text-sm">
                         {{ substr(auth()->user()->name ?? 'U', 0, 1) }}
                     </div>
@@ -62,14 +66,18 @@
                     </span>
                 </div>
 
-                <div class="absolute right-0 top-full w-32 bg-white rounded-md shadow-lg hidden group-hover:block overflow-hidden">
+                <div x-show="open"
+                     x-transition
+                     class="absolute right-4 top-14 w-36 bg-white rounded-md shadow-lg overflow-hidden z-50">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium">
+                        <button type="submit"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium">
                             Log Out
                         </button>
                     </form>
                 </div>
+
             </div>
 
         </div>
